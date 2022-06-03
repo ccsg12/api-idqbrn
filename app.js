@@ -18,6 +18,7 @@ connection
 const casesRouter = require("./routes/cases");
 const citiesRouter = require("./routes/cities");
 const diseasesRouter = require("./routes/diseases");
+const rolesRouter = require("./routes/roles");
 const usersRouter = require("./routes/users");
 
 const app = express();
@@ -32,6 +33,7 @@ app.use(cookieParser());
 app.use("/cases", casesRouter);
 app.use("/cities", citiesRouter);
 app.use("/diseases", diseasesRouter);
+app.use("/roles", rolesRouter);
 app.use("/users", usersRouter);
 
 module.exports = app;

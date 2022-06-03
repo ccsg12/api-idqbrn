@@ -13,6 +13,9 @@ User.init(
       type: DataTypes.STRING,
       unique: true,
     },
+    nome: {
+      type: DataTypes.STRING,
+    },
     senha: {
       comment: "Senha do usuário com hash.",
       type: DataTypes.STRING,
