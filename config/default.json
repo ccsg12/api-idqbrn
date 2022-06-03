@@ -1,0 +1,8 @@
+{
+  "name": "api IDQBRN",
+  "database": {
+    "host": "localhost",
+    "password": "",
+    "username": "root"
+  }
+}
