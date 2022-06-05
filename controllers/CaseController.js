@@ -65,7 +65,7 @@ module.exports = class CaseController {
           res.send();
         } else {
           res.status(404);
-          res.send({ error: "Caso nao encontrada" });
+          res.send({ error: "Caso nao encontrado" });
         }
       } else {
         res.status(400);
@@ -86,7 +86,7 @@ module.exports = class CaseController {
         const cases = await Case.findByPk(id)
 
         if (cases) {
-          res.send(_.pick(disease, ["id", "cidadeId", "confirmed","doencaId"]));
+          res.send(_.pick(cases, ["id", "cidadeId", "confirmed","doencaId"]));
         } else {
           res.status(404);
           res.send({ error: "Caso não encontrado." });
@@ -119,7 +119,7 @@ module.exports = class CaseController {
           await Case.update(caseDetails, { where: { id } });
           await cases.reload();
 
-          res.send(_.pick(disease, ["id", "cidadeId", "confirmed","doencaId"]));
+          res.send(_.pick(cases, ["id", "cidadeId", "confirmed","doencaId"]));
         } else {
           res.status(404);
           res.send({ error: "Caso não encontrado." });

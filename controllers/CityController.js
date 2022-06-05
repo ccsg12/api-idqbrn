@@ -10,4 +10,127 @@ module.exports = class CityController {
       res.send(e);
     }
   };
+
+
+create = async (req, res) => {
+  const { nome, codigoIBGE , latitude, longitude, population, state  } = req.body;
+
+  if (!nome) {
+    res.status(400);
+    res.json({ error: "O nome da cidade é obrigatório." });
+    return;
+  }
+
+  if (!codigoIBGE) {
+    res.status(400);
+    res.json({ error: "O CódigoIBGE é obrigatório." });
+    return;
+  }
+
+  try {
+    let newCity; 
+
+     
+      newCase = {
+        nome,
+        codigoIBGE,
+        latitude,
+        longitude,
+        population, 
+        state
+
+      }; 
+
+      let cities = await City.create(newCity);
+      cities = _.pick(cities, ["id", "nome", "codigoIBGE","latitude","longitude","population","state"]);
+     
+        debug(cities);
+        res.status(201);
+        res.send(cities); 
+
+  } catch (error) {
+    res.status(500);
+    res.send(error);
+    
+  }
+};
+
+    delete = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (id && !isNaN(id)) {
+        const cities = await City.findByPk(id);
+
+        if (cities) {
+          await City.destroy({ where: { id } });
+
+          res.status(204);
+          res.send();
+        } else {
+          res.status(404);
+          res.send({ error: "Cidade nao encontrada" });
+        }
+      } else {
+        res.status(400);
+        res.send({ error: "Requisição inválida." });
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error);
+    }
+  };
+  findById = async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      if (id && !isNaN(id)) {
+        const cities = await City.findByPk(id)
+
+        if (cities) {
+          res.send(_.pick(cities, ["id", "nome", "codigoIBGE","latitude","longitude","population","state"]));
+        } else {
+          res.status(404);
+          res.send({ error: "Cidade não encontrada." });
+        }
+      } else {
+        res.status(400);
+        res.send({ error: "Requisição inválida." });
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error);
+    }
+  };
+  update = async (req, res) => {
+    try {
+      const { id, nome, codigoIBGE , latitude, longitude, population, state } = req.body;
+
+      if (id && !isNaN(id)) {
+        let cities = await City.findByPk(id);
+
+        if (cities) {
+          let citiesDetails = {
+            cidadeId,
+            confirmed,
+            doencaId,
+          };          
+
+          await Case.update(citiesDetails, { where: { id } });
+          await cases.reload();
+
+          res.send(_.pick(cities, ["id", "cidadeId", "confirmed","doencaId"]));
+        } else {
+          res.status(404);
+          res.send({ error: "Caso não encontrado." });
+        }
+      } else {
+        res.status(400);
+        res.send({ error: "Requisição inválida." });
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error);
+    }
+  };
 };

@@ -6,4 +6,10 @@ const cityController = new CityController();
 
 router.get("/", cityController.list);
 
+router.get("/", cityController.list);
+router.get("/:id", cityController.findById);
+router.post("/", cityController.create);
+router.delete("/:id", cityController.delete);
+router.put("/", cityController.update);
+
 module.exports = router;
