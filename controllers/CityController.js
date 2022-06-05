@@ -31,7 +31,7 @@ create = async (req, res) => {
     let newCity; 
 
      
-      newCase = {
+      newCity = {
         nome,
         codigoIBGE,
         latitude,
@@ -111,18 +111,21 @@ create = async (req, res) => {
 
         if (cities) {
           let citiesDetails = {
-            cidadeId,
-            confirmed,
-            doencaId,
+            nome,
+          codigoIBGE,
+          latitude,
+          longitude,
+          population, 
+          state
           };          
 
-          await Case.update(citiesDetails, { where: { id } });
-          await cases.reload();
+          await City.update(citiesDetails, { where: { id } });
+          await cities.reload();
 
-          res.send(_.pick(cities, ["id", "cidadeId", "confirmed","doencaId"]));
+          res.send(_.pick(cities, ["id", "nome", "codigoIBGE","latitude","longitude","population","state"]));
         } else {
           res.status(404);
-          res.send({ error: "Caso não encontrado." });
+          res.send({ error: "Cidade não encontrada." });
         }
       } else {
         res.status(400);
