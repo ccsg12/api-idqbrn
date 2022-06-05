@@ -13,20 +13,26 @@ module.exports = class CaseController {
 
 
   create = async (req, res) => {
-    const { nome, prevencao, tratamento  } = req.body;
+    const { cidadeId, confirmed , doencaId  } = req.body;
 
-    if (!nome) {
+    if (!cidadeId) {
       res.status(400);
-      res.json({ error: "O nome é obrigatório." });
+      res.json({ error: "O Id da cidade é obrigatório." });
+      return;
+    }
+
+    if (!doencaId) {
+      res.status(400);
+      res.json({ error: "O Id da doenca é obrigatório." });
       return;
     }
 
     try {
-      let newDisease = await Disease.findOne({ where: { nome } });
+      let newDisease; 
 
-      if (!newDisease) {
+       
         newDisease = {
-          nome,
+          cidadeId,
           prevencao,
           tratamento,          
         }; 
@@ -34,10 +40,8 @@ module.exports = class CaseController {
         let disease = await Disease.create(newUser);
           disease = _.pick(disease, ["id", "nome", "prevencao","tratamento"]);
        
-      } else {
-        res.status(406);
-        res.send({ error: "A doenca já esta cadastrada." });
-      }
+      
+
     } catch (error) {
       res.status(500);
       res.send(error);

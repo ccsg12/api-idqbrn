@@ -30,9 +30,12 @@ module.exports = class DiseaseController {
           tratamento,          
         }; 
 
-        let disease = await Disease.create(newUser);
+        let disease = await Disease.create(newDisease);
           disease = _.pick(disease, ["id", "nome", "prevencao","tratamento"]);
        
+          debug(disease);
+          res.status(201);
+          res.send(disease);  
       } else {
         res.status(406);
         res.send({ error: "A doenca já esta cadastrada." });
