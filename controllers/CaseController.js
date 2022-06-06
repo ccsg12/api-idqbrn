@@ -107,5 +107,19 @@ module.exports = class CaseController {
     }
   };
 
+  doenca_case = async (req,res) =>{
+    try {
+      const {doencaId} = req.params;
+
+      
+        const cases = await Case.findAll({where: {doencaId}});
+
+          res.send(cases);
+      
+    } catch (error) {
+      res.status(500);
+      res.send(error);
+    }
+  };
 
 };

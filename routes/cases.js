@@ -5,6 +5,7 @@ const CaseController = require("../controllers/CaseController");
 const caseController = new CaseController();
 
 router.get("/", caseController.list);
+router.get("/:doencaId", caseController.doenca_case);
 router.post("/", caseController.create);
 router.delete("/:cidadeId/:doencaId", caseController.delete);
 router.put("/", caseController.update);
