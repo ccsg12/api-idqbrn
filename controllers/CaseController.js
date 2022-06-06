@@ -3,7 +3,7 @@ const Case = require("../models/Case");
 module.exports = class CaseController {
   list = async (req, res) => {
     try {
-      const cases = Case.findAll();
+      const cases = await Case.findAll();
       res.send(cases);
     } catch (e) {
       res.status(500);
@@ -30,11 +30,11 @@ module.exports = class CaseController {
     try {
       let newCase; 
 
-       
+      
         newCase = {
           cidadeId,
           confirmed,
-          doencaId,          
+          doencaId,        
         }; 
 
         let cases = await Case.create(newCase);
@@ -43,7 +43,7 @@ module.exports = class CaseController {
           debug(cases);
           res.status(201);
           res.send(cases); 
-
+     
     } catch (error) {
       res.status(500);
       res.send(error);
@@ -53,13 +53,13 @@ module.exports = class CaseController {
 
   delete = async (req, res) => {
     try {
-      const { id } = req.params;
+      const { cidadeId } = req.params;
 
-      if (id && !isNaN(id)) {
-        const cases = await Case.findByPk(id);
+      if (cidadeId && !isNaN(cidadeId)) {
+        const cases = await Case.findByPk(cidadeId);
 
         if (cases) {
-          await Case.destroy({ where: { id } });
+          await Case.destroy({ where: { cidadeId } });
 
           res.status(204);
           res.send();

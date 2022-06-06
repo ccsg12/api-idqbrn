@@ -28,9 +28,9 @@ create = async (req, res) => {
   }
 
   try {
-    let newCity; 
+    let newCity = await City.findOne({ where: { nome } });
 
-     
+    if (!newCity){
       newCity = {
         nome,
         codigoIBGE,
@@ -47,7 +47,10 @@ create = async (req, res) => {
         debug(cities);
         res.status(201);
         res.send(cities); 
-
+    }else {
+      res.status(406);
+      res.send({ error: "A cidade já esta cadastrada." });
+    }
   } catch (error) {
     res.status(500);
     res.send(error);
