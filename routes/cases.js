@@ -7,7 +7,10 @@ const caseController = new CaseController();
 router.get("/", caseController.list);
 router.get("/:doencaId", caseController.doenca_case);
 router.post("/", caseController.create);
+router.post("/csv", caseController.csv_create);
 router.delete("/:cidadeId/:doencaId", caseController.delete);
 router.put("/", caseController.update);
 
 module.exports = router;
+
+  

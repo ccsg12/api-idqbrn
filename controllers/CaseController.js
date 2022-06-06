@@ -10,7 +10,16 @@ module.exports = class CaseController {
       res.send(e);
     }
   };
-
+  csv_create = async (req, res) => {
+    const data = req.body;
+    console.log(data);
+    try {
+      const cases = await Case.bulkCreate(data);
+      res.send(cases);
+    } catch (err) {
+      res.send(err.message);
+    }
+  };
 
   create = async (req, res) => {
     const { cidadeId, quantidade , doencaId  } = req.body;
