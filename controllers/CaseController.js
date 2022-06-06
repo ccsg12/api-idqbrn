@@ -13,7 +13,7 @@ module.exports = class CaseController {
 
 
   create = async (req, res) => {
-    const { cidadeId, confirmed , doencaId  } = req.body;
+    const { cidadeId, quantidade , doencaId  } = req.body;
 
     if (!cidadeId) {
       res.status(400);
@@ -33,12 +33,12 @@ module.exports = class CaseController {
        
         newCase = {
           cidadeId,
-          confirmed,
+          quantidade,
           doencaId,          
         }; 
 
         let cases = await Case.create(newCase);
-          cases = _.pick(cases, ["id", "cidadeId", "confirmed","doencaId"]);
+          cases = _.pick(cases, ["id", "cidadeId", "quantidade","doencaId"]);
        
           debug(cases);
           res.status(201);

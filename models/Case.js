@@ -14,10 +14,10 @@ Case.init(
       allowNull: false,
       type: DataTypes.INTEGER,
     },
-    confirmed: {
-      comment: "Define se o caso foi confirmado.",
-      default: true,
-      type: DataTypes.BOOLEAN,
+    quantidade: {
+      comment: "Define a quant de casos confirmados.",
+      default: 0,
+      type: DataTypes.INTEGER,
     },
     doencaId: {
       comment: "Id da doença para qual o caso foi registrado.",
