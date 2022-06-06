@@ -53,13 +53,13 @@ module.exports = class CaseController {
 
   delete = async (req, res) => {
     try {
-      const { cidadeId } = req.params;
+      const { cidadeId, doencaId } = req.params;
 
-      if (cidadeId && !isNaN(cidadeId)) {
+      
         const cases = await Case.findByPk(cidadeId);
 
         if (cases) {
-          await Case.destroy({ where: { cidadeId } });
+          await Case.destroy({ where: { cidadeId, doencaId } });
 
           res.status(204);
           res.send();
@@ -67,10 +67,7 @@ module.exports = class CaseController {
           res.status(404);
           res.send({ error: "Caso nao encontrado" });
         }
-      } else {
-        res.status(400);
-        res.send({ error: "Requisição inválida." });
-      }
+      
     } catch (error) {
       res.status(500);
       res.send(error);
@@ -78,56 +75,32 @@ module.exports = class CaseController {
   };
 
 
-  findById = async (req, res) => {
-    try {
-      const { id } = req.params;
-
-      if (id && !isNaN(id)) {
-        const cases = await Case.findByPk(id)
-
-        if (cases) {
-          res.send(_.pick(cases, ["id", "cidadeId", "confirmed","doencaId"]));
-        } else {
-          res.status(404);
-          res.send({ error: "Caso não encontrado." });
-        }
-      } else {
-        res.status(400);
-        res.send({ error: "Requisição inválida." });
-      }
-    } catch (error) {
-      res.status(500);
-      res.send(error);
-    }
-  };
+  
 
 
   update = async (req, res) => {
     try {
-      const { id, cidadeId, quantidade , doencaId } = req.body;
+      const {cidadeId, quantidade , doencaId } = req.body;
 
-      if (id && !isNaN(id)) {
-        let cases = await Case.findByPk(id);
+      
+        let cases = await Case.findByPk(cidadeId);
 
         if (cases) {
           let caseDetails = {
-            cidadeId,
-            confirmed,
-            doencaId,
+            
+            quantidade,
+            
           };          
 
-          await Case.update(caseDetails, { where: { id } });
+          await Case.update(caseDetails, { where: { cidadeId, doencaId} });
           await cases.reload();
 
-          res.send(_.pick(cases, ["id", "cidadeId", "quantidade","doencaId"]));
+          res.send(_.pick(cases, ["cidadeId", "quantidade","doencaId"]));
         } else {
           res.status(404);
           res.send({ error: "Caso não encontrado." });
         }
-      } else {
-        res.status(400);
-        res.send({ error: "Requisição inválida." });
-      }
+      
     } catch (error) {
       res.status(500);
       res.send(error);

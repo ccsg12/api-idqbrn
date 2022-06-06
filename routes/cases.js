@@ -5,9 +5,8 @@ const CaseController = require("../controllers/CaseController");
 const caseController = new CaseController();
 
 router.get("/", caseController.list);
-router.get("/:id", caseController.findById);
 router.post("/", caseController.create);
-router.delete("/:id", caseController.delete);
+router.delete("/:cidadeId/:doencaId", caseController.delete);
 router.put("/", caseController.update);
 
 module.exports = router;
