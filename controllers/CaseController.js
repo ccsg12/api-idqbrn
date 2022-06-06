@@ -13,7 +13,7 @@ module.exports = class CaseController {
 
 
   create = async (req, res) => {
-    const { cidadeId, confirmed , doencaId  } = req.body;
+    const { cidadeId, quantidade , doencaId  } = req.body;
 
     if (!cidadeId) {
       res.status(400);
@@ -33,12 +33,12 @@ module.exports = class CaseController {
       
         newCase = {
           cidadeId,
-          confirmed,
+          quantidade,
           doencaId,        
         }; 
 
         let cases = await Case.create(newCase);
-          cases = _.pick(cases, ["id", "cidadeId", "confirmed","doencaId"]);
+          cases = _.pick(cases, ["id", "cidadeId", "quantidade","doencaId"]);
        
           debug(cases);
           res.status(201);
@@ -104,7 +104,7 @@ module.exports = class CaseController {
 
   update = async (req, res) => {
     try {
-      const { id, cidadeId, confirmed , doencaId } = req.body;
+      const { id, cidadeId, quantidade , doencaId } = req.body;
 
       if (id && !isNaN(id)) {
         let cases = await Case.findByPk(id);
@@ -119,7 +119,7 @@ module.exports = class CaseController {
           await Case.update(caseDetails, { where: { id } });
           await cases.reload();
 
-          res.send(_.pick(cases, ["id", "cidadeId", "confirmed","doencaId"]));
+          res.send(_.pick(cases, ["id", "cidadeId", "quantidade","doencaId"]));
         } else {
           res.status(404);
           res.send({ error: "Caso não encontrado." });
