@@ -1,3 +1,6 @@
+const _ = require("lodash");
+const debug = require("debug")("idqbrn:controller");
+
 const City = require("../models/City");
 
 module.exports = class CityController {
@@ -11,54 +14,60 @@ module.exports = class CityController {
     }
   };
 
+  create = async (req, res) => {
+    const { nome, codigoIBGE, latitude, longitude, populacao, estado } =
+      req.body;
 
-create = async (req, res) => {
-  const { nome, codigoIBGE , latitude, longitude, population, state  } = req.body;
+    if (!nome) {
+      res.status(400);
+      res.json({ error: "O nome da cidade é obrigatório." });
+      return;
+    }
 
-  if (!nome) {
-    res.status(400);
-    res.json({ error: "O nome da cidade é obrigatório." });
-    return;
-  }
+    if (!codigoIBGE) {
+      res.status(400);
+      res.json({ error: "O CódigoIBGE é obrigatório." });
+      return;
+    }
 
-  if (!codigoIBGE) {
-    res.status(400);
-    res.json({ error: "O CódigoIBGE é obrigatório." });
-    return;
-  }
+    try {
+      let newCity = await City.findOne({ where: { nome } });
 
-  try {
-    let newCity = await City.findOne({ where: { nome } });
+      if (!newCity) {
+        newCity = {
+          nome,
+          codigoIBGE,
+          latitude,
+          longitude,
+          populacao,
+          estado,
+        };
 
-    if (!newCity){
-      newCity = {
-        nome,
-        codigoIBGE,
-        latitude,
-        longitude,
-        population, 
-        state
+        let cities = await City.create(newCity);
+        cities = _.pick(cities, [
+          "id",
+          "nome",
+          "codigoIBGE",
+          "latitude",
+          "longitude",
+          "populacao",
+          "estado",
+        ]);
 
-      }; 
-
-      let cities = await City.create(newCity);
-      cities = _.pick(cities, ["id", "nome", "codigoIBGE","latitude","longitude","population","state"]);
-     
         debug(cities);
         res.status(201);
-        res.send(cities); 
-    }else {
-      res.status(406);
-      res.send({ error: "A cidade já esta cadastrada." });
+        res.send(cities);
+      } else {
+        res.status(406);
+        res.send({ error: "A cidade já esta cadastrada." });
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error);
     }
-  } catch (error) {
-    res.status(500);
-    res.send(error);
-    
-  }
-};
+  };
 
-    delete = async (req, res) => {
+  delete = async (req, res) => {
     try {
       const { id } = req.params;
 
@@ -88,10 +97,20 @@ create = async (req, res) => {
       const { id } = req.params;
 
       if (id && !isNaN(id)) {
-        const cities = await City.findByPk(id)
+        const cities = await City.findByPk(id);
 
         if (cities) {
-          res.send(_.pick(cities, ["id", "nome", "codigoIBGE","latitude","longitude","population","state"]));
+          res.send(
+            _.pick(cities, [
+              "id",
+              "nome",
+              "codigoIBGE",
+              "latitude",
+              "longitude",
+              "populacao",
+              "estado",
+            ])
+          );
         } else {
           res.status(404);
           res.send({ error: "Cidade não encontrada." });
@@ -107,7 +126,8 @@ create = async (req, res) => {
   };
   update = async (req, res) => {
     try {
-      const { id, nome, codigoIBGE , latitude, longitude, population, state } = req.body;
+      const { id, nome, codigoIBGE, latitude, longitude, populacao, estado } =
+        req.body;
 
       if (id && !isNaN(id)) {
         let cities = await City.findByPk(id);
@@ -115,17 +135,27 @@ create = async (req, res) => {
         if (cities) {
           let citiesDetails = {
             nome,
-          codigoIBGE,
-          latitude,
-          longitude,
-          population, 
-          state
-          };          
+            codigoIBGE,
+            latitude,
+            longitude,
+            populacao,
+            estado,
+          };
 
           await City.update(citiesDetails, { where: { id } });
           await cities.reload();
 
-          res.send(_.pick(cities, ["id", "nome", "codigoIBGE","latitude","longitude","population","state"]));
+          res.send(
+            _.pick(cities, [
+              "id",
+              "nome",
+              "codigoIBGE",
+              "latitude",
+              "longitude",
+              "populacao",
+              "estado",
+            ])
+          );
         } else {
           res.status(404);
           res.send({ error: "Cidade não encontrada." });

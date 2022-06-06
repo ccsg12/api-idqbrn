@@ -8,8 +8,8 @@ class City extends Model {}
 City.init(
   {
     nome: {
-      type: DataTypes.STRING,
       allowNull: false,
+      type: DataTypes.STRING,
     },
     codigoIBGE: {
       allowNull: false,
@@ -18,15 +18,19 @@ City.init(
       unique: true,
     },
     latitude: {
+      allowNull: false,
+      comment: "Valor numérico da latitude do centro da cidade.",
       type: DataTypes.DOUBLE,
     },
     longitude: {
+      allowNull: false,
+      comment: "Valor numérico da longitude do centro da cidade.",
       type: DataTypes.DOUBLE,
     },
-    population: {
+    populacao: {
       type: DataTypes.INTEGER,
     },
-    state: {
+    estado: {
       allowNull: false,
       comment: "Sigla do estado correspondente do município.",
       type: DataTypes.STRING,

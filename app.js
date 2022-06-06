@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const config = require("config");
 const logger = require("morgan");
 const debug = require("debug")("idqbrn:startup");
+const cors = require("cors");
 
 if (!config.get("jwtPrivateKey")) {
   debug("Variável de ambiente jwtPrivateKey não informada.");
@@ -34,6 +35,7 @@ const app = express();
 if (app.get("env") === "development") {
   app.use(logger("dev"));
 }
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

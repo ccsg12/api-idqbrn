@@ -1,3 +1,6 @@
+const _ = require("lodash");
+const debug = require("debug")("idqbrn:controller");
+
 const Case = require("../models/Case");
 
 module.exports = class CaseController {
@@ -11,9 +14,8 @@ module.exports = class CaseController {
     }
   };
 
-
   create = async (req, res) => {
-    const { cidadeId, quantidade , doencaId  } = req.body;
+    const { cidadeId, quantidade, doencaId } = req.body;
 
     if (!cidadeId) {
       res.status(400);
@@ -28,98 +30,82 @@ module.exports = class CaseController {
     }
 
     try {
-      let newCase; 
+      let newCase;
 
-      
-        newCase = {
-          cidadeId,
-          quantidade,
-          doencaId,        
-        }; 
+      newCase = {
+        cidadeId,
+        quantidade,
+        doencaId,
+      };
 
-        let cases = await Case.create(newCase);
-          cases = _.pick(cases, ["id", "cidadeId", "quantidade","doencaId"]);
-       
-          debug(cases);
-          res.status(201);
-          res.send(cases); 
-     
+      let cases = await Case.create(newCase);
+      cases = _.pick(cases, ["id", "cidadeId", "quantidade", "doencaId"]);
+
+      debug(cases);
+      res.status(201);
+      res.send(cases);
     } catch (error) {
       res.status(500);
       res.send(error);
     }
   };
-
 
   delete = async (req, res) => {
     try {
       const { cidadeId, doencaId } = req.params;
 
-      
-        const cases = await Case.findByPk(cidadeId);
+      const cases = await Case.findByPk(cidadeId);
 
-        if (cases) {
-          await Case.destroy({ where: { cidadeId, doencaId } });
+      if (cases) {
+        await Case.destroy({ where: { cidadeId, doencaId } });
 
-          res.status(204);
-          res.send();
-        } else {
-          res.status(404);
-          res.send({ error: "Caso nao encontrado" });
-        }
-      
+        res.status(204);
+        res.send();
+      } else {
+        res.status(404);
+        res.send({ error: "Caso nao encontrado" });
+      }
     } catch (error) {
       res.status(500);
       res.send(error);
     }
   };
-
-
-  
-
 
   update = async (req, res) => {
     try {
-      const {cidadeId, quantidade , doencaId } = req.body;
+      const { cidadeId, quantidade, doencaId } = req.body;
 
-      
-        let cases = await Case.findByPk(cidadeId);
+      let cases = await Case.findByPk(cidadeId);
 
-        if (cases) {
-          let caseDetails = {
-            
-            quantidade,
-            
-          };          
+      if (cases) {
+        let caseDetails = {
+          quantidade,
+        };
 
-          await Case.update(caseDetails, { where: { cidadeId, doencaId} });
-          await cases.reload();
+        await Case.update(caseDetails, { where: { cidadeId, doencaId } });
+        await cases.reload();
 
-          res.send(_.pick(cases, ["cidadeId", "quantidade","doencaId"]));
-        } else {
-          res.status(404);
-          res.send({ error: "Caso não encontrado." });
-        }
-      
+        res.send(_.pick(cases, ["cidadeId", "quantidade", "doencaId"]));
+      } else {
+        res.status(404);
+        res.send({ error: "Caso não encontrado." });
+      }
     } catch (error) {
       res.status(500);
       res.send(error);
     }
   };
 
-  doenca_case = async (req,res) =>{
+  doenca_case = async (req, res) => {
     try {
-      const {doencaId} = req.params;
+      const { doencaId } = req.params;
 
-      
-        const cases = await Case.findAll({where: {doencaId}});
+      const cases = await Case.findAll({ where: { doencaId } });
 
-          res.send(cases);
-      
+      res.send(cases);
     } catch (error) {
       res.status(500);
       res.send(error);
     }
   };
-
 };

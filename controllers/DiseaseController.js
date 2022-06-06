@@ -1,4 +1,8 @@
+const _ = require("lodash");
+const debug = require("debug")("idqbrn:controller");
+
 const Disease = require("../models/Disease");
+const City = require("../models/City");
 
 module.exports = class DiseaseController {
   list = async (req, res) => {
@@ -12,7 +16,7 @@ module.exports = class DiseaseController {
   };
 
   create = async (req, res) => {
-    const { nome, prevencao, tratamento  } = req.body;
+    const { nome, prevencao, tratamento } = req.body;
 
     if (!nome) {
       res.status(400);
@@ -27,15 +31,15 @@ module.exports = class DiseaseController {
         newDisease = {
           nome,
           prevencao,
-          tratamento,          
-        }; 
+          tratamento,
+        };
 
         let disease = await Disease.create(newDisease);
-          disease = _.pick(disease, ["id", "nome", "prevencao","tratamento"]);
-       
-          debug(disease);
-          res.status(201);
-          res.send(disease);  
+        disease = _.pick(disease, ["id", "nome", "prevencao", "tratamento"]);
+
+        debug(disease);
+        res.status(201);
+        res.send(disease);
       } else {
         res.status(406);
         res.send({ error: "A doenca já esta cadastrada." });
@@ -45,7 +49,6 @@ module.exports = class DiseaseController {
       res.send(error);
     }
   };
-
 
   delete = async (req, res) => {
     try {
@@ -78,10 +81,10 @@ module.exports = class DiseaseController {
       const { id } = req.params;
 
       if (id && !isNaN(id)) {
-        const disease = await Disease.findByPk(id)
+        const disease = await Disease.findByPk(id);
 
         if (disease) {
-          res.send(_.pick(disease, ["id", "nome", "prevencao","tratamento"]));
+          res.send(_.pick(disease, ["id", "nome", "prevencao", "tratamento"]));
         } else {
           res.status(404);
           res.send({ error: "Doenca não encontrado." });
@@ -96,10 +99,9 @@ module.exports = class DiseaseController {
     }
   };
 
-
   update = async (req, res) => {
     try {
-      const { id, nome, prevencao , tratamento } = req.body;
+      const { id, nome, prevencao, tratamento } = req.body;
 
       if (id && !isNaN(id)) {
         let disease = await Disease.findByPk(id);
@@ -109,12 +111,12 @@ module.exports = class DiseaseController {
             nome,
             prevencao,
             tratamento,
-          };          
+          };
 
           await Disease.update(diseaseDetails, { where: { id } });
           await disease.reload();
 
-          res.send(_.pick(disease, ["id", "nome", "prevencao","tratamento"]));
+          res.send(_.pick(disease, ["id", "nome", "prevencao", "tratamento"]));
         } else {
           res.status(404);
           res.send({ error: "Doenca não encontrado." });
@@ -129,4 +131,39 @@ module.exports = class DiseaseController {
     }
   };
 
+  listWithCities = async (req, res) => {
+    try {
+      const diseases = await Disease.findAll({
+        attributes: ["id", ["nome", "name"]],
+        include: [
+          {
+            model: City,
+            attributes: [
+              "id",
+              ["nome", "name"],
+              ["estado", "state"],
+              "latitude",
+              "longitude",
+            ],
+            through: {
+              as: "cases",
+              attributes: ["id", ["quantidade", "total"]],
+            },
+          },
+        ],
+      });
+
+      diseases.map((disease) =>
+        _.mapKeys(disease, (_, key) => {
+          console.log(key);
+          return key === "cidades" ? "cities" : key;
+        })
+      );
+
+      res.send(diseases);
+    } catch (e) {
+      res.status(500);
+      res.send(e);
+    }
+  };
 };

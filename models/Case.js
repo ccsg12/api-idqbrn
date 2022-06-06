@@ -9,13 +9,18 @@ class Case extends Model {}
 
 Case.init(
   {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
     cidadeId: {
       comment: "Id da cidade que o caso foi registrado.",
       allowNull: false,
       type: DataTypes.INTEGER,
     },
     quantidade: {
-      comment: "Define a quant de casos confirmados.",
+      comment: "Define a quantidade de casos confirmados.",
       default: 0,
       type: DataTypes.INTEGER,
     },

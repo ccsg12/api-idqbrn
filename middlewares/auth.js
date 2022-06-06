@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
-const adminAuth = (req, res, next) => {
+const auth = (req, res, next) => {
   try {
     if (req.headers["authorization"]) {
       const [type, token] = req.headers["authorization"].split(" ");
@@ -30,4 +30,4 @@ const adminAuth = (req, res, next) => {
   }
 };
 
-module.exports = adminAuth;
+module.exports = auth;
