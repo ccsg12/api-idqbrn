@@ -4,6 +4,7 @@ const config = require("config");
 const logger = require("morgan");
 const debug = require("debug")("idqbrn:startup");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
 
 if (!config.get("jwtPrivateKey")) {
   debug("Variável de ambiente jwtPrivateKey não informada.");
@@ -39,6 +40,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
 
 app.use("/api", indexRouter);
 app.use("/api/cases", casesRouter);

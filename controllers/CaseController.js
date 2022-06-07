@@ -14,6 +14,16 @@ module.exports = class CaseController {
     }
   };
 
+  bulkCreate = async (req, res) => {
+    const data = req.body;
+    try {
+      const cases = await Case.bulkCreate(data);
+      res.send(cases);
+    } catch (err) {
+      res.send(err.message);
+    }
+  };
+
   create = async (req, res) => {
     const { cidadeId, quantidade, doencaId } = req.body;
 
@@ -96,7 +106,7 @@ module.exports = class CaseController {
     }
   };
 
-  doenca_case = async (req, res) => {
+  listByDisease = async (req, res) => {
     try {
       const { doencaId } = req.params;
 
