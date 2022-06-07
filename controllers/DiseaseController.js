@@ -138,6 +138,7 @@ module.exports = class DiseaseController {
         include: [
           {
             model: City,
+            as: "cities",
             attributes: [
               "id",
               ["nome", "name"],
@@ -152,13 +153,6 @@ module.exports = class DiseaseController {
           },
         ],
       });
-
-      diseases.map((disease) =>
-        _.mapKeys(disease, (_, key) => {
-          console.log(key);
-          return key === "cidades" ? "cities" : key;
-        })
-      );
 
       res.send(diseases);
     } catch (e) {

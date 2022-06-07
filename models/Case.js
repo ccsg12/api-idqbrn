@@ -36,8 +36,8 @@ Case.init(
   }
 );
 
-City.belongsToMany(Disease, { through: Case });
-Disease.belongsToMany(City, { through: Case });
+City.belongsToMany(Disease, { through: Case, as: "diseases" });
+Disease.belongsToMany(City, { through: Case, as: "cities" });
 
 Case.sync()
   .then(() => debug("Tabela de casos ocorridos criada."))
