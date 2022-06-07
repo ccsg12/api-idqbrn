@@ -9,13 +9,15 @@ const User = require("../models/User");
 module.exports = class AuthController {
   signIn = async (req, res) => {
     const { senha, email } = req.body;
+    debug({ senha, email });
 
     try {
       const user = await User.findOne({ where: { email } });
+      debug(user);
 
       if (user && (await bcrypt.compare(senha, user.senha))) {
         const token = jwt.sign(
-          _.pick(user, ["id", "name", "email", "funcaoId"]),
+          _.pick(user, ["id", "nome", "email", "funcaoId"]),
           config.get("jwtPrivateKey")
         );
         debug(token);
@@ -27,6 +29,7 @@ module.exports = class AuthController {
       }
     } catch (error) {
       res.status(500);
+      debug(error);
       res.send(error);
     }
   };

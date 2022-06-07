@@ -25,7 +25,7 @@ Disease.init(
   }
 );
 
-Disease.sync()
+Disease.sync({ alter: false, force: false })
   .then(() => debug("Tabela de doenças epidemiológicas criada."))
   .catch((error) => debug(error));
 

@@ -4,6 +4,8 @@ const debug = require("debug")("idqbrn:controller");
 
 const User = require("../models/User");
 const Role = require("../models/Role");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 const bcryptSalt = 10;
 
@@ -112,6 +114,21 @@ module.exports = class UserController {
       } else {
         res.status(400);
         res.send({ error: "Requisição inválida." });
+      }
+    } catch (error) {
+      res.status(500);
+      res.send(error);
+    }
+  };
+
+  details = async (req, res) => {
+    try {
+      if (req.headers["authorization"]) {
+        const token = req.headers["authorization"].split(" ")[1];
+
+        const userDetails = jwt.verify(token, config.get("jwtPrivateKey"));
+
+        req.res(userDetails);
       }
     } catch (error) {
       res.status(500);

@@ -42,7 +42,7 @@ City.init(
   }
 );
 
-City.sync()
+City.sync({ alter: false, force: false })
   .then(() => debug("Tabela de cidades criada."))
   .catch((error) => debug(error));
 

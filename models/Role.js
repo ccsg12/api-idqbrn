@@ -22,7 +22,7 @@ Role.init(
   }
 );
 
-Role.sync()
+Role.sync({ alter: false, force: false })
   .then(() => debug("Tabela de funcões dos usuários criada."))
   .catch((error) => debug(error));
 

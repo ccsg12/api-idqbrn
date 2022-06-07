@@ -31,7 +31,7 @@ User.init(
 Role.hasMany(User);
 User.belongsTo(Role);
 
-User.sync()
+User.sync({ alter: false, force: false })
   .then(() => debug("Tabela de usuários criada."))
   .catch((error) => debug(error));
 
