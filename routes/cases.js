@@ -8,6 +8,8 @@ router.get("/", caseController.list);
 router.get("/:doencaId", caseController.doenca_case);
 router.post("/", caseController.create);
 router.post("/csv", caseController.csv_create);
+router.post("/bulk", caseController.bulk_create);
+
 router.delete("/:cidadeId/:doencaId", caseController.delete);
 router.put("/", caseController.update);
 

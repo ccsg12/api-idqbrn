@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 const config = require("config");
 const logger = require("morgan");
 const debug = require("debug")("idqbrn:startup");
+const fileUpload = require('express-fileupload');
 
 if (!config.get("jwtPrivateKey")) {
   debug("Variável de ambiente jwtPrivateKey não informada.");
@@ -29,6 +30,8 @@ const indexRouter = require("./routes");
 const rolesRouter = require("./routes/roles");
 const usersRouter = require("./routes/users");
 
+
+
 const app = express();
 
 if (app.get("env") === "development") {
@@ -37,6 +40,7 @@ if (app.get("env") === "development") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
 
 app.use("/api", indexRouter);
 app.use("/api/cases", casesRouter);
