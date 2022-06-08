@@ -1,5 +1,7 @@
-const Case = require("../models/Case");
 const _ = require("lodash");
+const debug = require("debug")("idqbrn:update_file");
+
+const Case = require("../models/Case");
 const City = require("../models/City");
 const Disease = require("../models/Disease");
 
@@ -9,50 +11,63 @@ module.exports = class FileUploadController {
       res.status(404);
       res.send({ message: "Requisição inválida. Arquivo não encontrado" });
     } else if (req.files.file.mimetype === "text/csv") {
-      let csvFile = req.files.file;
-      const data = csvParse(csvFile);
-
-      Case.destroy({
-        truncate: true,
-      }).then(() => {});
-
-      data[1] = _.uniqBy(data[1], "codigoIBGE");
-      data[2] = _.uniqBy(data[2], "nome");
-      let cities = data[1];
-      let diseases = data[2];
-
-      const dbCities = (await City.findAll({ attributes: ["codigoIBGE"] })).map(
-        (x) => x.codigoIBGE
-      );
-      const dbDiseases = (await Disease.findAll({ attributes: ["nome"] })).map(
-        (x) => x.nome
-      );
-
-      if (dbCities.length > 0) {
-        cities = _.remove(data[1], function (value) {
-          return _.find(dbCities, value.codigoIBGE);
-        });
-      }
-      if (dbDiseases.length > 0) {
-        diseases = _.remove(data[2], function (value) {
-          return _.find(dbDiseases, value.nome);
-        });
-      }
-
-      City.bulkCreate(cities)
+      Case.drop()
+        .then(() => City.destroy({ truncate: true, force: true }))
+        .then(() => Disease.destroy({ truncate: true, force: true }))
+        .then(() =>
+          Case.sync({ alter: false, force: false })
+            .then(() => debug("Tabela de casos ocorridos criada."))
+            .catch((error) => debug(error))
+        )
         .then(() => {
-          Disease.bulkCreate(diseases);
-        })
-        .then(() => {
-          Case.bulkCreate(data[0]);
-        })
-        .then(() => {
-          res.status(201);
-          res.send({ message: "Upload executado com sucesso." });
-        })
-        .catch((error) => {
-          res.status(500);
-          res.send(error);
+          let csvFile = req.files.file;
+          const data = csvParse(csvFile);
+
+          data[1] = _.uniqBy(data[1], "codigoIBGE");
+          data[2] = _.uniqBy(data[2], "nome");
+          let cities = data[1];
+          let diseases = data[2];
+
+          City.bulkCreate(cities)
+            .then((result) => {
+              cities = result;
+              debug(cities);
+
+              return Disease.bulkCreate(diseases);
+            })
+            .then((result) => {
+              diseases = result;
+              debug(diseases);
+
+              debug(data[0]);
+
+              data[0] = data[0].map((dataCase) => {
+                const diseaseCase = {
+                  quantidade: dataCase["quantidade"],
+                };
+
+                diseaseCase.cidadeId = cities.find(
+                  (city) => city.codigoIBGE === dataCase["codigoIBGE"]
+                ).id;
+                diseaseCase.doencaId = diseases.find(
+                  (disease) => disease.nome === dataCase["nome"]
+                ).id;
+
+                return diseaseCase;
+              });
+
+              debug(`depois ${data[0]}`);
+
+              return Case.bulkCreate(data[0]);
+            })
+            .then(() => {
+              res.status(201);
+              res.send({ message: "Upload executado com sucesso." });
+            })
+            .catch((error) => {
+              res.status(500);
+              res.send(error);
+            });
         });
     } else {
       res.status(422);
@@ -81,21 +96,18 @@ const csvParse = function (csvFile) {
     let dictCity = {};
     let dictDisease = {};
 
-    for (let j = 0; j < 3; ++j) {
-      if (isNaN(parseInt(csvRows[i][j]))) {
-        dictCase[csvRows[0][j]] = csvRows[i][j];
-      } else {
-        dictCase[csvRows[0][j]] = parseInt(csvRows[i][j]);
-      }
-    }
-    for (let j = 3; j < 9; ++j) {
+    dictCase[csvRows[0][0]] = parseInt(csvRows[i][0]);
+    dictCase[csvRows[0][2]] = parseInt(csvRows[i][2]);
+    dictCase[csvRows[0][7]] = csvRows[i][7];
+
+    for (let j = 1; j < 7; ++j) {
       if (isNaN(parseInt(csvRows[i][j]))) {
         dictCity[csvRows[0][j]] = csvRows[i][j];
       } else {
         dictCity[csvRows[0][j]] = parseFloat(csvRows[i][j]);
       }
     }
-    for (let j = 9; j < 12; ++j) {
+    for (let j = 7; j < 10; ++j) {
       if (isNaN(parseInt(csvRows[i][j]))) {
         dictDisease[csvRows[0][j]] = csvRows[i][j];
       } else {
