@@ -19,8 +19,9 @@ module.exports = class CaseController {
     try {
       const cases = await Case.bulkCreate(data);
       res.send(cases);
-    } catch (err) {
-      res.send(err.message);
+    } catch (error) {
+      res.status(500);
+      res.send(error);
     }
   };
 
@@ -35,7 +36,7 @@ module.exports = class CaseController {
 
     if (!doencaId) {
       res.status(400);
-      res.json({ error: "O Id da doenca é obrigatório." });
+      res.json({ error: "O Id da doença é obrigatório." });
       return;
     }
 
@@ -73,7 +74,7 @@ module.exports = class CaseController {
         res.send();
       } else {
         res.status(404);
-        res.send({ error: "Caso nao encontrado" });
+        res.send({ message: "Caso não encontrado." });
       }
     } catch (error) {
       res.status(500);
@@ -98,7 +99,7 @@ module.exports = class CaseController {
         res.send(_.pick(cases, ["cidadeId", "quantidade", "doencaId"]));
       } else {
         res.status(404);
-        res.send({ error: "Caso não encontrado." });
+        res.send({ message: "Caso não encontrado." });
       }
     } catch (error) {
       res.status(500);

@@ -20,13 +20,13 @@ module.exports = class CityController {
 
     if (!nome) {
       res.status(400);
-      res.json({ error: "O nome da cidade é obrigatório." });
+      res.json({ message: "O nome da cidade é obrigatório." });
       return;
     }
 
     if (!codigoIBGE) {
       res.status(400);
-      res.json({ error: "O CódigoIBGE é obrigatório." });
+      res.json({ message: "O CódigoIBGE é obrigatório." });
       return;
     }
 
@@ -59,7 +59,7 @@ module.exports = class CityController {
         res.send(cities);
       } else {
         res.status(406);
-        res.send({ error: "A cidade já esta cadastrada." });
+        res.send({ message: "A cidade já está cadastrada." });
       }
     } catch (error) {
       res.status(500);
@@ -81,11 +81,11 @@ module.exports = class CityController {
           res.send();
         } else {
           res.status(404);
-          res.send({ error: "Cidade nao encontrada" });
+          res.send({ message: "Cidade não encontrada." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);
@@ -113,11 +113,11 @@ module.exports = class CityController {
           );
         } else {
           res.status(404);
-          res.send({ error: "Cidade não encontrada." });
+          res.send({ message: "Cidade não encontrada." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);
@@ -158,11 +158,11 @@ module.exports = class CityController {
           );
         } else {
           res.status(404);
-          res.send({ error: "Cidade não encontrada." });
+          res.send({ message: "Cidade não encontrada." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);

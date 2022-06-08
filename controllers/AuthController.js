@@ -25,7 +25,7 @@ module.exports = class AuthController {
         res.send({ token });
       } else {
         res.status(400);
-        req.send({ error: "Requisição inválida" });
+        req.send({ message: "Requisição inválida" });
       }
     } catch (error) {
       res.status(500);

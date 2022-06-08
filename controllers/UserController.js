@@ -15,7 +15,7 @@ module.exports = class UserController {
 
     if (!email) {
       res.status(400);
-      res.json({ error: "O e-mail é obrigatório." });
+      res.json({ message: "O e-mail é obrigatório." });
       return;
     }
 
@@ -44,11 +44,11 @@ module.exports = class UserController {
           res.send(user);
         } else {
           res.status(400);
-          res.send({ error: "Função inválida." });
+          res.send({ message: "Função inválida." });
         }
       } else {
         res.status(406);
-        res.send({ error: "O e-mail já está cadastrado." });
+        res.send({ message: "O e-mail já está cadastrado." });
       }
     } catch (error) {
       res.status(500);
@@ -70,11 +70,11 @@ module.exports = class UserController {
           res.send();
         } else {
           res.status(404);
-          res.send({ error: "Usuário não encontrado." });
+          res.send({ message: "Usuário não encontrado." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);
@@ -109,11 +109,11 @@ module.exports = class UserController {
           res.send(_.pick(user, ["id", "nome", "email", "funcao"]));
         } else {
           res.status(404);
-          res.send({ error: "Usuário não encontrado." });
+          res.send({ message: "Usuário não encontrado." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);
@@ -160,11 +160,11 @@ module.exports = class UserController {
           res.send(_.pick(user, ["id", "nome", "email", "funcaoId"]));
         } else {
           res.status(404);
-          res.send({ error: "Usuário não encontrado." });
+          res.send({ message: "Usuário não encontrado." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);

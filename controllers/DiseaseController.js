@@ -20,7 +20,7 @@ module.exports = class DiseaseController {
 
     if (!nome) {
       res.status(400);
-      res.json({ error: "O nome é obrigatório." });
+      res.json({ message: "O nome é obrigatório." });
       return;
     }
 
@@ -42,7 +42,7 @@ module.exports = class DiseaseController {
         res.send(disease);
       } else {
         res.status(406);
-        res.send({ error: "A doenca já esta cadastrada." });
+        res.send({ message: "A doença já está cadastrada." });
       }
     } catch (error) {
       res.status(500);
@@ -64,11 +64,11 @@ module.exports = class DiseaseController {
           res.send();
         } else {
           res.status(404);
-          res.send({ error: "Doenca nao encontrada" });
+          res.send({ message: "Doença não encontrada" });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);
@@ -87,11 +87,11 @@ module.exports = class DiseaseController {
           res.send(_.pick(disease, ["id", "nome", "prevencao", "tratamento"]));
         } else {
           res.status(404);
-          res.send({ error: "Doenca não encontrado." });
+          res.send({ message: "Doença não encontrada." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);
@@ -119,11 +119,11 @@ module.exports = class DiseaseController {
           res.send(_.pick(disease, ["id", "nome", "prevencao", "tratamento"]));
         } else {
           res.status(404);
-          res.send({ error: "Doenca não encontrado." });
+          res.send({ message: "Doença não encontrada." });
         }
       } else {
         res.status(400);
-        res.send({ error: "Requisição inválida." });
+        res.send({ message: "Requisição inválida." });
       }
     } catch (error) {
       res.status(500);

@@ -10,7 +10,7 @@ const adminAuth = (req, res, next) => {
       next();
     } else {
       res.status(403);
-      res.send({ error: "Usuário sem permissão." });
+      res.send({ message: "Usuário sem permissão." });
     }
   } catch (error) {
     console.log(error);

@@ -22,7 +22,7 @@ const auth = (req, res, next) => {
     }
 
     res.status(401);
-    res.send({ error: "Usuário não autenticado." });
+    res.send({ message: "Usuário não autenticado." });
   } catch (error) {
     console.log(error);
     res.status(500);

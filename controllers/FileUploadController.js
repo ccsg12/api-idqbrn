@@ -6,7 +6,8 @@ const Disease = require("../models/Disease");
 module.exports = class FileUploadController {
   csvUpload = async (req, res) => {
     if (!req.files || !req.files.file) {
-      res.status(404).send("File not found");
+      res.status(404);
+      res.send({ message: "Requisição inválida. Arquivo não encontrado" });
     } else if (req.files.file.mimetype === "text/csv") {
       let csvFile = req.files.file;
       const data = csvParse(csvFile);
@@ -47,14 +48,15 @@ module.exports = class FileUploadController {
         })
         .then(() => {
           res.status(201);
-          res.send();
+          res.send({ message: "Upload executado com sucesso." });
         })
-        .catch((err) => {
-          res.send(err.message);
+        .catch((error) => {
+          res.status(500);
+          res.send(error);
         });
     } else {
       res.status(422);
-      res.send({ error: "Requisição inválida" });
+      res.send({ message: "Requisição inválida" });
     }
   };
 };
