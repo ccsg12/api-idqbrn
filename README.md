@@ -40,6 +40,7 @@ Para que o projeto seja executado corretamente, é preciso adicionar as variáve
 SET idqbrn_db_host="localhost" ## Apenas para desenvolvimento
 SET idqbrn_db_username="seu usuário de acesso ao banco mysql"
 SET idqbrn_db_password="sua senha de acesso"
+SET idqbrn_admin_password="senha para o usuário administrador"
 SET idqbrn_jwt_private_key="qualquer string para servir de codificadora/decodificadora do hash"
 ```
 
@@ -48,6 +49,7 @@ SET idqbrn_jwt_private_key="qualquer string para servir de codificadora/decodifi
 $env:idqbrn_db_host="localhost" ## Apenas para desenvolvimento
 $env:idqbrn_db_username="seu usuário de acesso ao banco mysql"
 $env:idqbrn_db_password="sua senha de acesso"
+$env:idqbrn_admin_password="senha para o usuário administrador"
 $env:idqbrn_jwt_private_key="qualquer string para servir de codificadora/decodificadora do hash"
 ```
 
@@ -56,6 +58,7 @@ $env:idqbrn_jwt_private_key="qualquer string para servir de codificadora/decodif
 EXPORT idqbrn_db_host="localhost" ## Apenas para desenvolvimento
 EXPORT idqbrn_db_username="seu usuário de acesso ao banco mysql"
 EXPORT idqbrn_db_password="sua senha de acesso"
+EXPORT idqbrn_admin_password="senha para o usuário administrador"
 EXPORT idqbrn_jwt_private_key="qualquer string para servir de codificadora/decodificadora do hash"
 ```
 
@@ -64,3 +67,4 @@ Então podemos rodar o projeto
 npm start
 ```
 A aplicação deve iniciar na porta 3000 com endereço [http://localhost:3000](http://localhost:3000) por padrão para o ambiente de desenvolvimento.
+Alguns endpoints são bloqueados para usuários não administradores, o primeiro usuário é adicionado ao banco como administrador, com a credencial ***email: admin@idqbrn.eb.br*** e senha retirada da variável de ambiente ***idqbrn_admin_password***

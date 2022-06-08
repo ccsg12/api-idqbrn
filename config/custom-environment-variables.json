@@ -4,5 +4,6 @@
     "username": "idqbrn_db_username",
     "password": "idqbrn_db_password"
   },
-  "jwtPrivateKey": "idqbrn_jwt_private_key"
+  "jwtPrivateKey": "idqbrn_jwt_private_key",
+  "admin_password": "idqbrn_admin_password"
 }
