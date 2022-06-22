@@ -4,9 +4,32 @@ const debug = require("debug")("idqbrn:controller");
 const City = require("../models/City");
 
 module.exports = class CityController {
-  list = async (req, res) => {
+
+  list= async (req, res) => {
     try {
-      const cities = await City.findAll();
+      const page = req.query.page;
+      const pagination = 1;
+      let offset = 0;
+
+      if(isNaN(page) || page == 1){
+        offset = 0;
+      }else {
+        offset = (parseInt(page)-1)*pagination;
+      }
+
+      const cities = await City.findAndCountAll({
+        limit: pagination,
+        offset: offset
+      });
+
+      let next;
+      if(offset + pagination >= cities.count){
+        next = false;
+      }else{
+        next = true;
+      }
+      cities.next = next;
+
       res.send(cities);
     } catch (e) {
       res.status(500);

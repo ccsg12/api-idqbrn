@@ -5,10 +5,32 @@ const Disease = require("../models/Disease");
 const City = require("../models/City");
 
 module.exports = class DiseaseController {
-  list = async (req, res) => {
+  list= async (req, res) => {
     try {
-      const disease = await Disease.findAll();
-      res.send(disease);
+      const page = req.query.page;
+      const pagination = 1;
+      let offset = 0;
+
+      if(isNaN(page) || page == 1){
+        offset = 0;
+      }else {
+        offset = (parseInt(page)-1)*pagination;
+      }
+
+      const diseases = await Disease.findAndCountAll({
+        limit: pagination,
+        offset: offset
+      });
+
+      let next;
+      if(offset + pagination >= diseases.count){
+        next = false;
+      }else{
+        next = true;
+      }
+      diseases.next = next;
+
+      res.send(diseases);
     } catch (e) {
       res.status(500);
       res.send(e);
