@@ -43,6 +43,19 @@ module.exports = class CityController {
     }
   };
 
+  listResumed = async (req, res) => {
+    try {
+      const cities = await City.findAll({
+        attributes: ["id", "nome", "estado"],
+      });
+
+      res.send(cities);
+    } catch (e) {
+      res.status(500);
+      res.send(e);
+    }
+  };
+
   create = async (req, res) => {
     const { nome, codigoIBGE, latitude, longitude, populacao, estado } =
       req.body;
