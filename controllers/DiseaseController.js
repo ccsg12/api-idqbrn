@@ -5,32 +5,40 @@ const Disease = require("../models/Disease");
 const City = require("../models/City");
 
 module.exports = class DiseaseController {
-  list= async (req, res) => {
+  list = async (req, res) => {
     try {
-      const page = req.query.page;
-      const pagination = 1;
-      let offset = 0;
+      let page = req.query.page;
+      let limit = req.query.perPage;
 
-      if(isNaN(page) || page == 1){
-        offset = 0;
-      }else {
-        offset = (parseInt(page)-1)*pagination;
+      let diseases;
+      if (page || limit) {
+        page = page ?? 1;
+        limit = limit ?? 10;
+
+        const isValid = !isNaN(page) && !isNaN(limit) && page > 0 && limit > 0;
+
+        if (isValid) {
+          const offset = (parseInt(page) - 1) * limit;
+
+          diseases = await Disease.findAndCountAll({
+            limit: parseInt(limit),
+            offset,
+          });
+
+          diseases.next = offset + limit < diseases.count;
+
+          res.send(diseases);
+        } else {
+          res.status(400);
+          res.send({
+            message: "Os parâmetros page e perPage devem ser números válidos.",
+          });
+        }
+      } else {
+        diseases = await Disease.findAll();
+
+        res.send(diseases);
       }
-
-      const diseases = await Disease.findAndCountAll({
-        limit: pagination,
-        offset: offset
-      });
-
-      let next;
-      if(offset + pagination >= diseases.count){
-        next = false;
-      }else{
-        next = true;
-      }
-      diseases.next = next;
-
-      res.send(diseases);
     } catch (e) {
       res.status(500);
       res.send(e);

@@ -4,33 +4,39 @@ const debug = require("debug")("idqbrn:controller");
 const City = require("../models/City");
 
 module.exports = class CityController {
-
-  list= async (req, res) => {
+  list = async (req, res) => {
     try {
-      const page = req.query.page;
-      const pagination = 1;
-      let offset = 0;
+      let page = req.query.page;
+      let limit = req.query.perPage;
 
-      if(isNaN(page) || page == 1){
-        offset = 0;
-      }else {
-        offset = (parseInt(page)-1)*pagination;
+      if (page || limit) {
+        page = page ?? 1;
+        limit = limit ?? 10;
+
+        const isValid = !isNaN(page) && !isNaN(limit) && page > 0 && limit > 0;
+
+        if (isValid) {
+          const offset = (parseInt(page) - 1) * limit;
+
+          const cities = await City.findAndCountAll({
+            limit: parseInt(limit),
+            offset,
+          });
+
+          cities.next = offset + limit < cities.count;
+
+          res.send(cities);
+        } else {
+          res.status(400);
+          res.send({
+            message: "Os parâmetros page e perPage devem ser números válidos.",
+          });
+        }
+      } else {
+        const cities = await City.findAll();
+
+        res.send(cities);
       }
-
-      const cities = await City.findAndCountAll({
-        limit: pagination,
-        offset: offset
-      });
-
-      let next;
-      if(offset + pagination >= cities.count){
-        next = false;
-      }else{
-        next = true;
-      }
-      cities.next = next;
-
-      res.send(cities);
     } catch (e) {
       res.status(500);
       res.send(e);
