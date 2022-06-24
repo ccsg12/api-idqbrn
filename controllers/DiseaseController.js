@@ -45,6 +45,19 @@ module.exports = class DiseaseController {
     }
   };
 
+  listResumed = async (req, res) => {
+    try {
+      const diseases = await Disease.findAll({
+        attributes: ["id", "nome"],
+      });
+
+      res.send(diseases);
+    } catch (e) {
+      res.status(500);
+      res.send(e);
+    }
+  };
+
   create = async (req, res) => {
     const { nome, prevencao, tratamento } = req.body;
 
