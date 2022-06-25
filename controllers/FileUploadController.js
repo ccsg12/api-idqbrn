@@ -1,3 +1,5 @@
+const { exist } = require("joi");
+const { isNull, parseInt, isNumber } = require("lodash");
 const _ = require("lodash");
 const debug = require("debug")("idqbrn:update_file");
 
@@ -21,25 +23,26 @@ module.exports = class FileUploadController {
         )
         .then(() => {
           let csvFile = req.files.file;
-          const data = csvParse(csvFile);
+          const data = csvNewParse(csvFile);
 
           data[1] = _.uniqBy(data[1], "codigoIBGE");
           data[2] = _.uniqBy(data[2], "nome");
           let cities = data[1];
           let diseases = data[2];
 
+          //console.log(cities);
           City.bulkCreate(cities)
             .then((result) => {
               cities = result;
-              debug(cities);
+              //debug(cities);
 
               return Disease.bulkCreate(diseases);
             })
             .then((result) => {
               diseases = result;
-              debug(diseases);
+             //debug(diseases);
 
-              debug(data[0]);
+              //debug(data[0]);
 
               data[0] = data[0].map((dataCase) => {
                 const diseaseCase = {
@@ -49,10 +52,12 @@ module.exports = class FileUploadController {
                 diseaseCase.cidadeId = cities.find(
                   (city) => city.codigoIBGE === dataCase["codigoIBGE"]
                 ).id;
+                
                 diseaseCase.doencaId = diseases.find(
                   (disease) => disease.nome === dataCase["nome"]
                 ).id;
 
+                //debug("id", doencaId)
                 return diseaseCase;
               });
 
@@ -66,6 +71,7 @@ module.exports = class FileUploadController {
             })
             .catch((error) => {
               res.status(500);
+              debug("Erro" + error)
               res.send(error);
             });
         });
@@ -76,14 +82,16 @@ module.exports = class FileUploadController {
   };
 };
 
-const csvParse = function (csvFile) {
+
+
+const csvNewParse = function (csvFile) {
   const convert = (from, to) => (str) => Buffer.from(str, from).toString(to);
   const hexToUtf8 = convert("hex", "utf8");
 
   let csvData = hexToUtf8(csvFile.data).split("\r\n");
   let csvRows = [];
   csvData.forEach((data) => {
-    csvRows.push(data.split(","));
+    csvRows.push(data.split(";"));
   });
 
   let data = [];
@@ -91,38 +99,55 @@ const csvParse = function (csvFile) {
   let dataCity = [];
   let dataDisease = [];
 
-  for (let i = 1; i < csvRows.length; ++i) {
-    let dictCase = {};
-    let dictCity = {};
+  //DOENÇAS
+  for( let j = 11; j<26; ++j){
     let dictDisease = {};
 
-    dictCase[csvRows[0][0]] = parseInt(csvRows[i][0]);
-    dictCase[csvRows[0][2]] = parseInt(csvRows[i][2]);
-    dictCase[csvRows[0][7]] = csvRows[i][7];
+    dictDisease["nome"] = csvRows[0][j];
+    dictDisease["prevencao"] = "";
+    dictDisease["tratamento"] = "";
 
-    for (let j = 1; j < 7; ++j) {
-      if (isNaN(parseInt(csvRows[i][j]))) {
-        dictCity[csvRows[0][j]] = csvRows[i][j];
-      } else {
-        dictCity[csvRows[0][j]] = parseFloat(csvRows[i][j]);
-      }
-    }
-    for (let j = 7; j < 10; ++j) {
-      if (isNaN(parseInt(csvRows[i][j]))) {
-        dictDisease[csvRows[0][j]] = csvRows[i][j];
-      } else {
-        dictDisease[csvRows[0][j]] = parseInt(csvRows[i][j]);
-      }
-    }
-
-    dataCase.push(dictCase);
-    dataCity.push(dictCity);
     dataDisease.push(dictDisease);
+  }
+  
+
+  for (let i = 1; i <300; ++i) {
+    let dictCase = {};
+    let dictCity = {};
+    
+    if(!isNaN(parseInt(csvRows[i][2])) && !isNull(csvRows[i][1])){
+      //CASOS
+      for( let j = 11; j<26; ++j){
+        if (parseInt(csvRows[i][j]) != 0 ){
+            dictCase["nome"] = csvRows[0][j];
+            dictCase["codigoIBGE"] = parseInt(csvRows[i][2]);
+            dictCase["quantidade"] = parseInt(csvRows[i][j]);
+
+            
+        }
+      }
+
+      if(dictCase["nome"]){
+        dataCase.push(dictCase);
+      }
+      //CIDADES
+      dictCity["nome"] = csvRows[i][1];
+      dictCity["codigoIBGE"] = parseInt(csvRows[i][2]);
+      dictCity["latitude"] = parseFloat((csvRows[i][6]?.toString() || "").replace(",", "."));       //Troca "," por "."
+      dictCity["longitude"] = parseFloat((csvRows[i][7]?.toString() || "").replace(",", "."));      //Troca "," por "."
+      dictCity["populacao"] = parseInt(csvRows[i][9]);
+      dictCity["estado"] = csvRows[i][0];
+
+      dataCity.push(dictCity);
+    }
+
   }
 
   data.push(dataCase);
   data.push(dataCity);
   data.push(dataDisease);
 
+  console.log(dataCity)
+  
   return data;
 };
