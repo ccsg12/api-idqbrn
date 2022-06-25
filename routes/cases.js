@@ -8,7 +8,7 @@ router.get("/", caseController.list);
 router.get("/:doencaId", caseController.listByDisease);
 router.post("/", caseController.create);
 router.post("/bulk", caseController.bulkCreate);
-router.delete("/:cidadeId/:doencaId", caseController.delete);
+router.delete("/:id", caseController.delete);
 router.put("/", caseController.update);
 
 module.exports = router;

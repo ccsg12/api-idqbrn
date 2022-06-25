@@ -88,12 +88,12 @@ module.exports = class CaseController {
 
   delete = async (req, res) => {
     try {
-      const { cidadeId, doencaId } = req.params;
+      const { id } = req.params;
 
-      const cases = await Case.findByPk(cidadeId);
+      const cases = await Case.findByPk(id);
 
       if (cases) {
-        await Case.destroy({ where: { cidadeId, doencaId } });
+        await Case.destroy({ where: { id } });
 
         res.status(204);
         res.send();
@@ -109,9 +109,9 @@ module.exports = class CaseController {
 
   update = async (req, res) => {
     try {
-      const { cidadeId, quantidade, doencaId } = req.body;
+      const { id, cidadeId, quantidade, doencaId } = req.body;
 
-      let cases = await Case.findByPk(cidadeId);
+      let cases = await Case.findByPk(id);
 
       if (cases) {
         let caseDetails = {
