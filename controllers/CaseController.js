@@ -17,10 +17,11 @@ module.exports = class CaseController {
         const isValid = !isNaN(page) && !isNaN(limit) && page > 0 && limit > 0;
 
         if (isValid) {
+          limit = parseInt(limit);
           const offset = (parseInt(page) - 1) * limit;
 
           cases = await Case.findAndCountAll({
-            limit: parseInt(limit),
+            limit,
             offset,
           });
 

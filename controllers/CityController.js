@@ -16,10 +16,11 @@ module.exports = class CityController {
         const isValid = !isNaN(page) && !isNaN(limit) && page > 0 && limit > 0;
 
         if (isValid) {
+          limit = parseInt(limit);
           const offset = (parseInt(page) - 1) * limit;
 
           const cities = await City.findAndCountAll({
-            limit: parseInt(limit),
+            limit,
             offset,
           });
 

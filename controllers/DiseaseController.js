@@ -18,10 +18,11 @@ module.exports = class DiseaseController {
         const isValid = !isNaN(page) && !isNaN(limit) && page > 0 && limit > 0;
 
         if (isValid) {
+          limit = parseInt(limit);
           const offset = (parseInt(page) - 1) * limit;
 
           diseases = await Disease.findAndCountAll({
-            limit: parseInt(limit),
+            limit,
             offset,
           });
 
